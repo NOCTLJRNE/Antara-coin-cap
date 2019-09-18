@@ -72,6 +72,11 @@ export default {
           icon: 'mdi-shield-half-full',
           title: 'Komodo Coin Cap',
           to: '/coinCap'
+        },
+        {
+          icon: 'mdi-chart-areaspline',
+          title: 'Komodo Chart',
+          to: '/chartkmdcontainer'
         }
       ],
       miniVariant: false,

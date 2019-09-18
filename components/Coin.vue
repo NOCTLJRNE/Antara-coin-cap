@@ -23,19 +23,19 @@
           <nuxt-link :to="`/coins/${name}`">{{ name }}</nuxt-link>
         </v-col>
         <v-col cols="2">
-          <p class="text-center">{{marketCap}}</p>
+          <p class="text-center">{{marketCap | currency('$',0)}}</p>
         </v-col>
         <v-col cols="1">
-          <p class="text-center">{{ price }}</p>
+          <p class="text-center">{{ price | currency('$',3) }}</p>
         </v-col>
         <v-col cols="2">
-          <p class="text-center">{{volume}}</p>
+          <p class="text-center">{{volume | currency('$',0)}}</p>
         </v-col>
         <v-col cols="2">
           <p class="text-center">{{supply}}</p>
         </v-col>
         <v-col cols="1">
-          <p class="text-center" :class="[change24h < 0 ? red : green]">{{change24h}}</p>
+          <p class="text-center" :class="[change24h < 0 ? red : green]">{{change24h | percentage}}</p>
         </v-col>
         <v-col cols="1">
           <p class="text-center">Graph</p>
@@ -102,6 +102,37 @@ export default {
     imgPath() {
       let path = this.imgPathArray[this.symbol]
       return require('' + path)
+    }
+  },
+  filters: {
+    currency(value, currency, decimals) {
+      const digitsRE = /(\d{3})(?=\d)/g
+      value = parseFloat(value)
+      if (!isFinite(value) || (!value && value !== 0)) return ''
+      currency = currency != null ? currency : '$'
+      decimals = decimals != null ? decimals : 2
+      var stringified = Math.abs(value).toFixed(decimals)
+      var _int = decimals ? stringified.slice(0, -1 - decimals) : stringified
+      var i = _int.length % 3
+      var head = i > 0 ? _int.slice(0, i) + (_int.length > 3 ? ',' : '') : ''
+      var _float = decimals ? stringified.slice(-1 - decimals) : ''
+      var sign = value < 0 ? '-' : ''
+      return (
+        sign + currency + head + _int.slice(i).replace(digitsRE, '$1,') + _float
+      )
+    },
+    percentage(value, currency, decimals) {
+      value = parseFloat(value)
+      if (!isFinite(value) || (!value && value !== 0)) return ''
+      currency = currency != null ? currency : '$'
+      decimals = decimals != null ? decimals : 2
+      var stringified = Math.abs(value).toFixed(decimals)
+      var _int = decimals ? stringified.slice(0, -1 - decimals) : stringified
+      var i = _int.length % 3
+      var head = i > 0 ? _int.slice(0, i) + (_int.length > 3 ? ',' : '') : ''
+      var _float = decimals ? stringified.slice(-1 - decimals) : ''
+      var sign = value < 0 ? '-' : '+'
+      return sign + head + _float + '%'
     }
   }
 }
