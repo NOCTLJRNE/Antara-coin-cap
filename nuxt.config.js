@@ -2,6 +2,20 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'universal',
+  generate: {
+    routes: [
+      '/coins/Komodo',
+      '/coins/Pirate',
+      '/coins/DEX',
+      '/coins/Verus%20Coin',
+      '/coins/RedFOX%20Labs',
+      '/coins/Utrum',
+      '/coins/Zaddex',
+      '/coins/ChainZilla',
+      '/coins/Koinon',
+      '/coins/Komodore64'
+    ]
+  },
   /*
    ** Headers of the page
    */
