@@ -1,14 +1,60 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title>{{id}}</v-card-title>
-      <v-card-text v-if="loaded">
-        Homepage:
-        <a :href="homePageComputed">{{homePageComputed}}</a>
-      </v-card-text>
-
+    <!-- <v-container class="grey lighten-5">
+      <v-row no-gutters>
+        <v-col cols="12" sm="6" md="8">
+          <v-card class="pa-2" outlined tile>.col-12 .col-sm-6 .col-md-8</v-card>
+        </v-col>
+        <v-col cols="6" md="4">
+          <v-card class="pa-2" outlined tile>.col-6 .col-md-4</v-card>
+        </v-col>
+      </v-row>
+    </v-container>-->
+    <v-container>
+      <v-row>
+        <v-col cols="3">
+          <v-card>
+            <img :src="imgPath" height="50" width="50" />
+            <v-card-title>{{id}}</v-card-title>
+            <usefulLinks v-if="loaded" :additionalData="{...coinInfoData.additional_data}" />
+          </v-card>
+        </v-col>
+        <v-col cols="9">
+          <v-card v-if="loaded">
+            <v-card-title>
+              {{ price | currency('$',3) }}
+              <span
+                :class="[change24h < 0 ? red : green]"
+              >&nbsp;({{change24h | percentage}})</span>
+            </v-card-title>
+            <v-simple-table>
+              <thead>
+                <tr>
+                  <th class="text-left font-weight-bold title">Market Cap</th>
+                  <th class="text-left font-weight-bold title">Volume (24h)</th>
+                  <th class="text-left font-weight-bold title">Circulating Supply</th>
+                  <th class="text-left font-weight-bold title">Max Supply</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{marketCap | currency('$',0)}}</td>
+                  <td>{{volume | currency('$',0)}}</td>
+                  <td>{{supply}}</td>
+                  <td>200,000,000</td>
+                </tr>
+              </tbody>
+            </v-simple-table>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!-- <v-card>
       <img :src="imgPath" height="50" width="50" />
-    </v-card>
+      <v-card-title>{{id}}</v-card-title>
+
+      <usefulLinks v-if="loaded" :additionalData="{...coinInfoData.additional_data}" />
+    </v-card>-->
     <div class="container">
       <h3>{{id}} CHART</h3>
       <!-- <chartkmd v-if="loaded" :chartdata="testdata" :options="options" /> -->
@@ -21,10 +67,14 @@
 
 <script>
 import chartkmd from '~/components/chartkmd.vue'
+import usefulLinks from '~/components/usefulLinks.vue'
 import axios from 'axios'
+import { percentage } from '~/src/percentage.js'
+import { currency } from '~/src/currency.js'
 export default {
   components: {
-    chartkmd
+    chartkmd,
+    usefulLinks
   },
   mounted() {
     let priceAPIurl = this.priceAPI[this.id]
@@ -87,7 +137,7 @@ export default {
         DEX: 'http://95.217.44.58/api/v1/charts/dex',
         Pirate: 'http://95.217.44.58/api/v1/charts/pirate',
         'Verus Coin': 'http://95.217.44.58/api/v1/charts/vrsc', // work
-        'RedFOX Labs': 'http://95.217.44.58/api/v1/charts/kmd',
+        'RedFOX Labs': 'http://95.217.44.58/api/v1/charts/rfox',
         Utrum: 'http://95.217.44.58/api/v1/charts/oot',
         Zaddex: 'http://95.217.44.58/api/v1/charts/zexo',
         Komodore64: 'http://95.217.44.58/api/v1/charts/k64',
@@ -99,7 +149,7 @@ export default {
         DEX: 'http://95.217.44.58/api/v1/tickers/dex',
         Pirate: 'http://95.217.44.58/api/v1/tickers/pirate',
         'Verus Coin': 'http://95.217.44.58/api/v1/tickers/vrsc', // work
-        'RedFOX Labs': 'http://95.217.44.58/api/v1/tickers/kmd',
+        'RedFOX Labs': 'http://95.217.44.58/api/v1/tickers/rfox',
         Utrum: 'http://95.217.44.58/api/v1/tickers/oot',
         Zaddex: 'http://95.217.44.58/api/v1/tickers/zexo',
         Komodore64: 'http://95.217.44.58/api/v1/tickers/k64',
@@ -118,7 +168,15 @@ export default {
         legend: {
           display: true
         }
-      }
+      },
+      item: 1,
+      items: [
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' }
+      ],
+      red: 'red--text',
+      green: 'green--text'
     }
   },
   methods: {
@@ -256,7 +314,43 @@ export default {
       return this.coinInfoData.additional_data
         ? this.coinInfoData.additional_data.links.homepage[0]
         : 'Nothing here :('
+    },
+    name() {
+      return this.coinInfoData.ticker.name
+    },
+    rank() {
+      return this.coinInfoData.ticker.rank
+    },
+    supply() {
+      return this.coinInfoData.supply.toFixed(3)
+    },
+    price() {
+      return this.coinInfoData.ticker.quotes.USD.price
+    },
+    symbol() {
+      return this.coinInfoData.ticker.symbol
+    },
+    volume() {
+      return this.coinInfoData.ticker.quotes.USD.volume_24h
+    },
+    marketCap() {
+      return this.coinInfoData.ticker.quotes.USD.market_cap
+    },
+    change24h() {
+      return this.coinInfoData.ticker.quotes.USD.percent_change_24h
+    },
+    additionalData() {
+      let temp = { ...this.coinInfoData.additional_data }
+      console.log(temp)
+      return
+      {
+        temp
+      }
     }
+  },
+  filters: {
+    currency: currency,
+    percentage: percentage
   }
 }
 </script>

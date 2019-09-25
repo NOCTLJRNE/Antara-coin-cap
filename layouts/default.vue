@@ -54,9 +54,6 @@
 export default {
   data() {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
       items: [
         {
           icon: 'mdi-apps',
@@ -72,13 +69,16 @@ export default {
           icon: 'mdi-shield-half-full',
           title: 'Komodo Coin Cap',
           to: '/coinCap'
-        },
-        {
-          icon: 'mdi-chart-areaspline',
-          title: 'Komodo Chart',
-          to: '/chartkmdcontainer'
         }
+        // {
+        //   icon: 'mdi-chart-areaspline',
+        //   title: 'Komodo Chart',
+        //   to: '/chartkmdcontainer'
+        // }
       ],
+      clipped: false,
+      drawer: false,
+      fixed: false,
       miniVariant: false,
       right: true,
       rightDrawer: false,
