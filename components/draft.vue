@@ -16,12 +16,7 @@
           <v-card>
             <img :src="imgPath" height="50" width="50" />
             <v-card-title>{{id}}</v-card-title>
-            <v-card-text v-if="!loaded">Loading...</v-card-text>
-            <usefulLinks
-              v-else-if="loaded && coinInfoData.additional_data"
-              :additionalData="{...coinInfoData.additional_data}"
-            />
-            <v-card-text v-else>Nothing here :[</v-card-text>
+            <usefulLinks v-if="loaded" :additionalData="{...coinInfoData.additional_data}" />
           </v-card>
         </v-col>
         <v-col cols="9">
@@ -46,7 +41,7 @@
                   <td>{{marketCap | currency('$',0)}}</td>
                   <td>{{volume | currency('$',0)}}</td>
                   <td>{{supply}}</td>
-                  <td>???</td>
+                  <td>200,000,000</td>
                 </tr>
               </tbody>
             </v-simple-table>
@@ -63,33 +58,25 @@
     <div class="container">
       <h3>{{id}} CHART</h3>
       <!-- <chartkmd v-if="loaded" :chartdata="testdata" :options="options" /> -->
-      <!-- <chartkmd v-if="loaded" :chartdata="coinPriceChartData" :options="options" />
+      <chartkmd v-if="loaded" :chartdata="coinPriceChartData" :options="options" />
       <chartkmd v-if="loaded" :chartdata="coinMarketCapChartData" :options="options" />
-      <chartkmd v-if="loaded" :chartdata="coinVolumeChartData" :options="options" />-->
-      <apexchart
+      <chartkmd v-if="loaded" :chartdata="coinVolumeChartData" :options="options" />
+      <!-- <apexchart
         v-if="loaded"
         width="100%"
         height="350"
         type="line"
         :options="apexoptionsprice"
         :series="apexseriesprice"
-      ></apexchart>
-      <apexchart
+      ></apexchart>-->
+      <!-- <apexchart
         v-if="loaded"
         width="100%"
         height="350"
         type="line"
         :options="apexoptionscap"
         :series="apexseriescap"
-      ></apexchart>
-      <apexchart
-        v-if="loaded"
-        width="100%"
-        height="350"
-        type="line"
-        :options="apexoptionsvolume"
-        :series="apexseriesvolume"
-      ></apexchart>
+      ></apexchart>-->
     </div>
   </div>
 </template>
@@ -98,36 +85,51 @@
 import chartkmd from '~/components/chartkmd.vue'
 import usefulLinks from '~/components/usefulLinks.vue'
 import axios from 'axios'
-// import VueApexCharts from 'vue-apexcharts'
+import VueApexCharts from 'vue-apexcharts'
 import { percentage } from '~/src/percentage.js'
 import { currency } from '~/src/currency.js'
-import colors from '~/node_modules/vuetify/lib/util/colors'
+import colors from 'vuetify/lib/util/colors'
 
 export default {
   components: {
     chartkmd,
     usefulLinks,
-    // apexchart: VueApexCharts
-    apexchart: () => import('vue-apexcharts')
+    apexchart: VueApexCharts
   },
   mounted() {
-    this.updatePrice()
-    this.interval = setInterval(this.updatePrice, 60000)
+    let priceAPIurl = this.priceAPI[this.id]
+    let infoAPIurl = this.infoAPI[this.id]
+
+    axios
+      .all([axios.get(priceAPIurl), axios.get(infoAPIurl)])
+      .then((response) => {
+        this.pricedataraw = response[0].data.prices
+        this.marketcapdataraw = response[0].data.market_caps
+        this.volumedataraw = response[0].data.total_volumes
+        this.coinInfoData = response[1].data
+      })
+      .catch((error) => {
+        console.log(error[0])
+        console.log(error[1])
+        this.errored = true
+      })
+      .finally(() => (this.loaded = true))
+    // this.interval = setInterval(this.updatePrice, 60000)
   },
   data() {
     return {
       id: this.$route.params.coinInfo,
       imgPathArray: {
-        Komodo: './img/kmd.png', // work
-        DEX: './img/dex.png',
-        Pirate: './img/arrr.png',
-        'Verus Coin': './img/vrsc.png', // work
-        'RedFOX Labs': './img/rfox.png',
-        Utrum: './img/oot.png',
-        Zaddex: './img/zexo.png',
-        Komodore64: './img/k64.png',
-        Koinon: './img/koin.png',
-        ChainZilla: './img/zilla.png'
+        Komodo: './picture/kmd.png', // work
+        DEX: './picture/dex.png',
+        Pirate: './picture/arrr.png',
+        'Verus Coin': './picture/vrsc.png', // work
+        'RedFOX Labs': './picture/rfox.png',
+        Utrum: './picture/oot.png',
+        Zaddex: './picture/zexo.png',
+        Komodore64: './picture/k64.png',
+        Koinon: './picture/koin.png',
+        ChainZilla: './picture/zilla.png'
       },
       priceAPI: {
         Komodo: 'http://95.217.44.58/api/v1/charts/kmd', // work
@@ -194,7 +196,20 @@ export default {
           this.errored = true
         })
         .finally(() => (this.loaded = true))
-      // this.$myInjectedFunction('test plugins')
+
+      // axios
+      //   .get('http://95.217.44.58/api/v1/charts/kmd')
+      //   .then((response) => {
+      //     this.pricedataraw = response.data.prices
+      //     this.marketcapdataraw = response.data.market_caps
+      //     this.volumedataraw = response.data.total_volumes
+      //     // console.log("coin cap response:", response.data);
+      //   })
+      //   .catch((error) => {
+      //     // console.log(error);
+      //     this.errored = true
+      //   })
+      //   .finally(() => (this.loaded = true))
     }
   },
   computed: {
@@ -336,7 +351,7 @@ export default {
     },
     apexoptionsprice() {
       return {
-        colors: [colors.green.accent3],
+        colors: ['#00FF00'],
         chart: {
           foreColor: '#373d3f',
           id: 'apex-price',
@@ -382,11 +397,8 @@ export default {
         },
         tooltip: {
           enabled: true,
-          theme: 'dark',
-          x: {
-            show: true,
-            format: 'dd MMM HH:mm'
-          }
+          // fillSeriesColor: true,
+          theme: 'dark'
         },
         xaxis: {
           type: 'datetime',
@@ -401,8 +413,7 @@ export default {
         yaxis: {
           labels: {
             formatter: function(value) {
-              // return '$' + value.toFixed(3)
-              return currency(value, '$', 3)
+              return '$' + value.toFixed(3)
             },
             // formatter: currency(value,'$', 3)
             style: {
@@ -424,10 +435,10 @@ export default {
     },
     apexoptionscap() {
       return {
-        colors: [colors.cyan.accent2],
+        colors: ['#00FF00'],
         chart: {
           foreColor: '#373d3f',
-          id: 'apex-cap',
+          id: 'apex-price',
           animations: {
             initialAnimation: {
               enabled: false
@@ -450,11 +461,8 @@ export default {
         },
         tooltip: {
           enabled: true,
-          theme: 'dark',
-          x: {
-            show: true,
-            format: 'dd MMM HH:mm'
-          }
+
+          theme: 'dark'
         },
         xaxis: {
           type: 'datetime',
@@ -466,7 +474,9 @@ export default {
         },
         yaxis: {
           labels: {
-            formatter: (value) => currency(value, '$', 0),
+            formatter: function(value) {
+              return '$' + value.toFixed(0)
+            },
 
             style: {
               color: colors.grey.lighten1
@@ -481,69 +491,6 @@ export default {
           name: 'Market Cap',
           // data: [...this.coinVolumeComputed]
           data: this.marketcapdataraw
-        }
-      ]
-    },
-    apexoptionsvolume() {
-      return {
-        colors: [colors.orange.accent2],
-        chart: {
-          foreColor: '#373d3f',
-          id: 'apex-volume',
-          animations: {
-            initialAnimation: {
-              enabled: false
-            }
-          }
-        },
-
-        stroke: {
-          show: true,
-
-          width: 2
-        },
-        title: {
-          text: 'Volume',
-
-          style: {
-            fontSize: '16px',
-            color: colors.orange.accent2
-          }
-        },
-        tooltip: {
-          enabled: true,
-          theme: 'dark',
-          x: {
-            show: true,
-            format: 'dd MMM HH:mm'
-          }
-        },
-        xaxis: {
-          type: 'datetime',
-          labels: {
-            style: {
-              colors: colors.grey.lighten1
-            }
-            // format: 'dd/MM'
-          }
-        },
-        yaxis: {
-          labels: {
-            formatter: (value) => currency(value, '$', 0),
-
-            style: {
-              color: colors.grey.lighten1
-            }
-          }
-        }
-      }
-    },
-    apexseriesvolume() {
-      return [
-        {
-          name: 'Volume',
-          // data: [...this.coinVolumeComputed]
-          data: this.volumedataraw
         }
       ]
     }

@@ -11,6 +11,7 @@
 <script>
 import chartkmd from '~/components/chartkmd.vue'
 import axios from 'axios'
+
 export default {
   name: 'LineChartContainer',
   components: { chartkmd },

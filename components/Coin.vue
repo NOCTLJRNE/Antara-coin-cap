@@ -59,18 +59,18 @@ export default {
   },
   data() {
     return {
-      //img_src: require(this.imgPath),
+      //img_src: require(this.imgPath), //  KSB, Ninja /tickers/{symbol} except /tickers/{name} for pirate, supernet
       imgPathArray: {
-        KMD: './kmd.png',
-        DEX: './dex.png',
-        ARRR: './arrr.png',
-        VRSC: './vrsc.png',
-        RFOX: './rfox.png',
-        OOT: './oot.png',
-        ZEXO: './zexo.png',
-        K64: './k64.png',
-        KOIN: './koin.png',
-        ZILLA: './zilla.png'
+        KMD: './img/kmd.png',
+        DEX: './img/dex.png',
+        ARRR: './img/arrr.png',
+        VRSC: './img/vrsc.png',
+        RFOX: './img/rfox.png',
+        OOT: './img/oot.png',
+        ZEXO: './img/zexo.png',
+        K64: './img/k64.png',
+        KOIN: './img/koin.png',
+        ZILLA: './img/zilla.png'
       },
       red: 'red--text',
       green: 'green--text'
