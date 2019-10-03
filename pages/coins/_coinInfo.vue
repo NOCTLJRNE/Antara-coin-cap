@@ -15,7 +15,7 @@
         <v-col cols="3">
           <v-card>
             <img :src="imgPath" height="50" width="50" />
-            <v-card-title>{{id}}</v-card-title>
+            <v-card-title>{{symbolToName[id]}}</v-card-title>
             <v-card-text v-if="!loaded">Loading...</v-card-text>
             <usefulLinks
               v-else-if="loaded && coinInfoData.additional_data"
@@ -46,7 +46,7 @@
                   <td>{{marketCap | currency('$',0)}}</td>
                   <td>{{volume | currency('$',0)}}</td>
                   <td>{{supply}}</td>
-                  <td>???</td>
+                  <td>{{maxSupply}}</td>
                 </tr>
               </tbody>
             </v-simple-table>
@@ -61,7 +61,11 @@
       <usefulLinks v-if="loaded" :additionalData="{...coinInfoData.additional_data}" />
     </v-card>-->
     <div class="container">
-      <h3>{{id}} CHART</h3>
+      <h3>
+        {{id.toUpperCase()}} CHARTS
+        <span v-if="!loaded">Loading...</span>
+        <span v-if="noChartsData">Data not found :[</span>
+      </h3>
       <!-- <chartkmd v-if="loaded" :chartdata="testdata" :options="options" /> -->
       <!-- <chartkmd v-if="loaded" :chartdata="coinPriceChartData" :options="options" />
       <chartkmd v-if="loaded" :chartdata="coinMarketCapChartData" :options="options" />
@@ -117,42 +121,112 @@ export default {
   data() {
     return {
       id: this.$route.params.coinInfo,
-      imgPathArray: {
-        Komodo: './img/kmd.png', // work
-        DEX: './img/dex.png',
-        Pirate: './img/arrr.png',
-        'Verus Coin': './img/vrsc.png', // work
-        'RedFOX Labs': './img/rfox.png',
-        Utrum: './img/oot.png',
-        Zaddex: './img/zexo.png',
-        Komodore64: './img/k64.png',
-        Koinon: './img/koin.png',
-        ChainZilla: './img/zilla.png'
+      symbolToName: {
+        kmd: 'Komodo',
+        dex: 'DEX',
+        arrr: 'Pirate',
+        vrsc: 'Verus Coin',
+        rfox: 'RedFox Labs',
+        oot: 'Utrum',
+        zexo: 'Zaddex',
+        k64: 'Komodore64',
+        zilla: 'ChainZilla',
+        unity: 'SuperNet',
+        koin: 'Koinon',
+        bet: 'BET',
+        dsec: 'DSEC',
+        bntn: 'BNTN',
+        dion: 'DION',
+        our: 'OUR',
+        etomic: 'ETOMIC',
+        sec: 'SEC',
+        glxt: 'GLXT',
+        wmc: 'WLC',
+        chain: 'ChainMakers',
+        pgt: 'PGT',
+        hodl: 'HODL',
+        bots: 'Bots',
+        coqui: 'CoquiCash',
+        axo: 'AXO',
+        crypto: 'Crypto',
+        pangea: 'Pangea',
+        mgw: 'MGW',
+        ceal: 'CEAL',
+        ccl: 'CCL',
+        ksb: 'KSB',
+        iln: 'ILN',
+        kv: 'KV',
+        revs: 'REVS',
+        btch: 'BTCH',
+        rick: 'Rick',
+        mshark: 'MShark',
+        jumblr: 'JUMBLR',
+        ninja: 'Ninja',
+        mesh: 'Mesh',
+        kmdice: 'KMDice',
+        prlpay: 'PRLPay'
       },
-      priceAPI: {
-        Komodo: 'http://95.217.44.58/api/v1/charts/kmd', // work
-        DEX: 'http://95.217.44.58/api/v1/charts/dex',
-        Pirate: 'http://95.217.44.58/api/v1/charts/pirate',
-        'Verus Coin': 'http://95.217.44.58/api/v1/charts/vrsc', // work
-        'RedFOX Labs': 'http://95.217.44.58/api/v1/charts/rfox',
-        Utrum: 'http://95.217.44.58/api/v1/charts/oot',
-        Zaddex: 'http://95.217.44.58/api/v1/charts/zexo',
-        Komodore64: 'http://95.217.44.58/api/v1/charts/k64',
-        Koinon: 'http://95.217.44.58/api/v1/charts/koin',
-        ChainZilla: 'http://95.217.44.58/api/v1/charts/chain'
-      },
-      infoAPI: {
-        Komodo: 'http://95.217.44.58/api/v1/tickers/kmd', // work
-        DEX: 'http://95.217.44.58/api/v1/tickers/dex',
-        Pirate: 'http://95.217.44.58/api/v1/tickers/pirate',
-        'Verus Coin': 'http://95.217.44.58/api/v1/tickers/vrsc', // work
-        'RedFOX Labs': 'http://95.217.44.58/api/v1/tickers/rfox',
-        Utrum: 'http://95.217.44.58/api/v1/tickers/oot',
-        Zaddex: 'http://95.217.44.58/api/v1/tickers/zexo',
-        Komodore64: 'http://95.217.44.58/api/v1/tickers/k64',
-        Koinon: 'http://95.217.44.58/api/v1/tickers/koin',
-        ChainZilla: 'http://95.217.44.58/api/v1/tickers/chain'
-      },
+      // imgPathArray: {
+      //   Komodo: './img/kmd.png', // work
+      //   DEX: './img/dex.png',
+      //   Pirate: './img/arrr.png',
+      //   'Verus Coin': './img/vrsc.png', // work
+      //   'RedFOX Labs': './img/rfox.png',
+      //   Utrum: './img/oot.png',
+      //   Zaddex: './img/zexo.png',
+      //   Komodore64: './img/k64.png',
+      //   Koinon: './img/koin.png',
+      //   ChainZilla: './img/zilla.png'
+      // },
+      // priceAPI: {
+      //   Komodo: 'http://95.217.44.58/api/v1/charts/kmd', // work
+      //   DEX: 'http://95.217.44.58/api/v1/charts/dex',
+      //   Pirate: 'http://95.217.44.58/api/v1/charts/pirate',
+      //   'Verus Coin': 'http://95.217.44.58/api/v1/charts/vrsc', // work
+      //   'RedFOX Labs': 'http://95.217.44.58/api/v1/charts/rfox',
+      //   Utrum: 'http://95.217.44.58/api/v1/charts/oot',
+      //   Zaddex: 'http://95.217.44.58/api/v1/charts/zexo',
+      //   Komodore64: 'http://95.217.44.58/api/v1/charts/k64',
+      //   Koinon: 'http://95.217.44.58/api/v1/charts/koin',
+      //   ChainZilla: 'http://95.217.44.58/api/v1/charts/chain'
+      // },
+      // infoAPI: {
+      //   Komodo: 'http://95.217.44.58/api/v1/tickers/kmd', // work
+      //   DEX: 'http://95.217.44.58/api/v1/tickers/dex',
+      //   Pirate: 'http://95.217.44.58/api/v1/tickers/pirate',
+      //   'Verus Coin': 'http://95.217.44.58/api/v1/tickers/vrsc', // work
+      //   'RedFOX Labs': 'http://95.217.44.58/api/v1/tickers/rfox',
+      //   Utrum: 'http://95.217.44.58/api/v1/tickers/oot',
+      //   Zaddex: 'http://95.217.44.58/api/v1/tickers/zexo',
+      //   Komodore64: 'http://95.217.44.58/api/v1/tickers/k64',
+      //   Koinon: 'http://95.217.44.58/api/v1/tickers/koin',
+      //   ChainZilla: 'http://95.217.44.58/api/v1/tickers/chain'
+      // },
+
+      // priceAPI: {
+      //   kmd: 'http://95.217.44.58/api/v1/charts/kmd', // work
+      //   dex: 'http://95.217.44.58/api/v1/charts/dex',
+      //   arrr: 'http://95.217.44.58/api/v1/charts/pirate',
+      //   vrsc: 'http://95.217.44.58/api/v1/charts/vrsc', // work
+      //   rfox: 'http://95.217.44.58/api/v1/charts/rfox',
+      //   oot: 'http://95.217.44.58/api/v1/charts/oot',
+      //   zexo: 'http://95.217.44.58/api/v1/charts/zexo',
+      //   k64: 'http://95.217.44.58/api/v1/charts/k64',
+      //   koin: 'http://95.217.44.58/api/v1/charts/koin',
+      //   zilla: 'http://95.217.44.58/api/v1/charts/chain'
+      // },
+      // infoAPI: {
+      //   kmd: 'http://95.217.44.58/api/v1/tickers/kmd', // work
+      //   dex: 'http://95.217.44.58/api/v1/tickers/dex',
+      //   arrr: 'http://95.217.44.58/api/v1/tickers/pirate',
+      //   vrsc: 'http://95.217.44.58/api/v1/tickers/vrsc', // work
+      //   rfox: 'http://95.217.44.58/api/v1/tickers/rfox',
+      //   oot: 'http://95.217.44.58/api/v1/tickers/oot',
+      //   zexo: 'http://95.217.44.58/api/v1/tickers/zexo',
+      //   k64: 'http://95.217.44.58/api/v1/tickers/k64',
+      //   koin: 'http://95.217.44.58/api/v1/tickers/koin',
+      //   zilla: 'http://95.217.44.58/api/v1/tickers/chain'
+      // },
       loaded: false,
       coinInfoData: null,
       pricedataraw: null,
@@ -178,8 +252,18 @@ export default {
   },
   methods: {
     updatePrice() {
-      let priceAPIurl = this.priceAPI[this.id]
-      let infoAPIurl = this.infoAPI[this.id]
+      let coin = ''
+      if (this.id === 'arrr') {
+        coin = 'pirate'
+      } else if (this.id === 'unity') {
+        coin = 'supernet'
+      } else {
+        coin = this.id
+      }
+      // let priceAPIurl = this.priceAPI[this.id]
+      // let infoAPIurl = this.infoAPI[this.id]
+      let priceAPIurl = `http://95.217.44.58/api/v1/charts/${coin}`
+      let infoAPIurl = `http://95.217.44.58/api/v1/tickers/${coin}`
       axios
         .all([axios.get(priceAPIurl), axios.get(infoAPIurl)])
         .then((response) => {
@@ -199,11 +283,13 @@ export default {
   },
   computed: {
     imgPath() {
-      //   return this.imgPathArray[this.id]
-      let path = this.imgPathArray[this.id]
-      return require('' + path)
+      // let path = this.imgPathArray[this.id]
+      // return require('' + path)
+      return require(`./img/${this.id}.png`)
     },
-
+    noChartsData() {
+      return this.loaded && !this.pricedataraw
+    },
     timeComputed() {
       return (
         this.pricedataraw
@@ -310,6 +396,11 @@ export default {
     },
     supply() {
       return this.coinInfoData.supply.toFixed(3)
+    },
+    maxSupply() {
+      return this.coinInfoData.ticker.max_supply
+        ? this.coinInfoData.ticker.max_supply
+        : '???'
     },
     price() {
       return this.coinInfoData.ticker.quotes.USD.price

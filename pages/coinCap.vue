@@ -19,7 +19,7 @@
             <p class="text-center">Price</p>
           </v-col>
           <v-col cols="2">
-            <p class="text-center">Volume</p>
+            <p class="text-center">Volume 24h</p>
           </v-col>
           <v-col cols="2">
             <p class="text-center">Supply</p>
@@ -35,12 +35,8 @@
     </v-container>
     <!-- <v-container>
     <div>-->
-    <Coin
-      v-for="(coin,index) in sortByMarketCap"
-      v-bind:coin="coin"
-      :key="coin.ticker.symbol"
-      :index="index"
-    />
+    <Coin v-for="(coin,index) in sortByMarketCap" v-bind:coin="coin" :key="coin.ticker.symbol" />
+    <Coin v-for="(coin,index) in priceNull" v-bind:coin="coin" :key="coin.ticker.symbol" />
     <!-- </div>
     </v-container>-->
     <!-- <v-layout>
@@ -101,11 +97,25 @@ export default {
         (coin) => coin.ticker.quotes.USD.price != '0'
       )
     },
+    priceNull() {
+      return this.coinCapList.filter(
+        (coin) => coin.ticker.quotes.USD.price === 0
+      )
+    },
     sortByMarketCap() {
       return this.priceNotNull.sort(
         (a, b) =>
           b.ticker.quotes.USD.market_cap - a.ticker.quotes.USD.market_cap
       )
+    },
+    sortByMarketCapFull() {
+      return this.priceNotNull.sort(
+        (a, b) =>
+          b.ticker.quotes.USD.market_cap - a.ticker.quotes.USD.market_cap
+      )
+    },
+    symbols() {
+      return this.coinCapList.map((coin) => coin.ticker.symbol)
     }
   }
 }

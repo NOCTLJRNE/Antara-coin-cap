@@ -20,7 +20,8 @@
           <!-- <v-img :src="require(""+imgPathArray.KMD)" height="50" width="50"></v-img> -->
         </v-col>
         <v-col cols="1">
-          <nuxt-link :to="`/coins/${name}`">{{ name }}</nuxt-link>
+          <!-- <nuxt-link :to="`/coins/${name}`">{{ name }}</nuxt-link> -->
+          <nuxt-link :to="`/coins/${symbolLowerCase}`">{{ name }}</nuxt-link>
         </v-col>
         <v-col cols="2">
           <p class="text-center">{{marketCap | currency('$',0)}}</p>
@@ -52,26 +53,23 @@ export default {
   props: {
     coin: {
       required: true
-    },
-    index: {
-      required: true
     }
   },
   data() {
     return {
       //img_src: require(this.imgPath), //  KSB, Ninja /tickers/{symbol} except /tickers/{name} for pirate, supernet
-      imgPathArray: {
-        KMD: './img/kmd.png',
-        DEX: './img/dex.png',
-        ARRR: './img/arrr.png',
-        VRSC: './img/vrsc.png',
-        RFOX: './img/rfox.png',
-        OOT: './img/oot.png',
-        ZEXO: './img/zexo.png',
-        K64: './img/k64.png',
-        KOIN: './img/koin.png',
-        ZILLA: './img/zilla.png'
-      },
+      // imgPathArray: {
+      //   KMD: './img/kmd.png',
+      //   DEX: './img/dex.png',
+      //   ARRR: './img/arrr.png',
+      //   VRSC: './img/vrsc.png',
+      //   RFOX: './img/rfox.png',
+      //   OOT: './img/oot.png',
+      //   ZEXO: './img/zexo.png',
+      //   K64: './img/k64.png',
+      //   KOIN: './img/koin.png',
+      //   ZILLA: './img/zilla.png'
+      // },
       red: 'red--text',
       green: 'green--text'
     }
@@ -79,6 +77,8 @@ export default {
   computed: {
     name() {
       return this.coin.ticker.name
+        ? this.coin.ticker.name
+        : this.coin.ticker.symbol
     },
     rank() {
       return this.coin.ticker.rank
@@ -92,6 +92,9 @@ export default {
     symbol() {
       return this.coin.ticker.symbol
     },
+    symbolLowerCase() {
+      return this.coin.ticker.symbol.toLowerCase()
+    },
     volume() {
       return this.coin.ticker.quotes.USD.volume_24h.toFixed(3)
     },
@@ -102,42 +105,14 @@ export default {
       return this.coin.ticker.quotes.USD.percent_change_24h
     },
     imgPath() {
-      let path = this.imgPathArray[this.symbol]
-      return require('' + path)
+      // let path = this.imgPathArray[this.symbol]
+      // return require('' + path)
+      return require(`./img/${this.symbolLowerCase}.png`)
     }
   },
   filters: {
     currency: currency,
     percentage: percentage
-    // currency(value, currency, decimals) {
-    //   const digitsRE = /(\d{3})(?=\d)/g
-    //   value = parseFloat(value)
-    //   if (!isFinite(value) || (!value && value !== 0)) return ''
-    //   currency = currency != null ? currency : '$'
-    //   decimals = decimals != null ? decimals : 2
-    //   var stringified = Math.abs(value).toFixed(decimals)
-    //   var _int = decimals ? stringified.slice(0, -1 - decimals) : stringified
-    //   var i = _int.length % 3
-    //   var head = i > 0 ? _int.slice(0, i) + (_int.length > 3 ? ',' : '') : ''
-    //   var _float = decimals ? stringified.slice(-1 - decimals) : ''
-    //   var sign = value < 0 ? '-' : ''
-    //   return (
-    //     sign + currency + head + _int.slice(i).replace(digitsRE, '$1,') + _float
-    //   )
-    // },
-    // percentage(value, currency, decimals) {
-    //   value = parseFloat(value)
-    //   if (!isFinite(value) || (!value && value !== 0)) return ''
-    //   currency = currency != null ? currency : '$'
-    //   decimals = decimals != null ? decimals : 2
-    //   var stringified = Math.abs(value).toFixed(decimals)
-    //   var _int = decimals ? stringified.slice(0, -1 - decimals) : stringified
-    //   var i = _int.length % 3
-    //   var head = i > 0 ? _int.slice(0, i) + (_int.length > 3 ? ',' : '') : ''
-    //   var _float = decimals ? stringified.slice(-1 - decimals) : ''
-    //   var sign = value < 0 ? '-' : '+'
-    //   return sign + head + _float + '%'
-    // }
   }
 }
 </script>

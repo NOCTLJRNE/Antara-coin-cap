@@ -36,27 +36,35 @@ export default {
         { text: 'Explorer', icon: 'mdi-magnify' },
         { text: 'Chat', icon: 'mdi-discord' },
         { text: 'Source Code', icon: 'mdi-github-circle' }
-      ],
-      allLinks: [
-        this.additionalData.links.homepage[0],
-        this.additionalData.links.blockchain_site[0],
-        this.additionalData.links.chat_url[0],
-        this.additionalData.links.repos_url.github[0]
       ]
+      // allLinks: [
+      //   this.additionalData.links.homepage[0],
+      //   this.additionalData.links.blockchain_site[0],
+      //   this.additionalData.links.chat_url[0],
+      //   this.additionalData.links.repos_url.github[0]
+      // ]
     }
   },
   computed: {
     homePage() {
-      return this.additionalData.links.homepage[0]
+      return this.additionalData.links.homepage
+        ? this.additionalData.links.homepage[0]
+        : 'https://www.google.com'
     },
     explorer() {
-      return this.additionalData.links.blockchain_site[0]
+      return this.additionalData.links.blockchain_site
+        ? this.additionalData.links.blockchain_site[0]
+        : 'https://www.google.com'
     },
     chat() {
-      return this.additionalData.links.chat_url[0]
+      return this.additionalData.links.chat_url
+        ? this.additionalData.links.chat_url[0]
+        : 'https://www.google.com'
     },
     github() {
-      return this.additionalData.links.repos_url.github[0]
+      return this.additionalData.links.repos_url.github
+        ? this.additionalData.links.repos_url.github[0]
+        : 'https://www.google.com'
     },
 
     itemsCoinsComputed() {
