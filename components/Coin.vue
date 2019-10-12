@@ -6,7 +6,7 @@
   <v-container fluid>
     <v-card>
       <v-row>
-        <v-col cols="1">
+        <v-col cols="2" md="1">
           <p class="text-center">{{ rank }}</p>
         </v-col>
         <!-- <v-col cols="2">
@@ -15,31 +15,31 @@
             {{ name }}
           </div>
         </v-col>-->
-        <v-col cols="1">
+        <v-col cols="2" md="1">
           <v-img :src="imgPath" height="50" width="50"></v-img>
           <!-- <v-img :src="require(""+imgPathArray.KMD)" height="50" width="50"></v-img> -->
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2" md="1">
           <!-- <nuxt-link :to="`/coins/${name}`">{{ name }}</nuxt-link> -->
           <nuxt-link :to="`/coins/${symbolLowerCase}`">{{ name }}</nuxt-link>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="2" md="2">
           <p class="text-center">{{marketCap | currency('$',0)}}</p>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2" md="1">
           <p class="text-center">{{ price | currency('$',3) }}</p>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="2" md="2" class="d-sm-none d-md-block">
           <p class="text-center">{{volume | currency('$',0)}}</p>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="2" md="2" class="d-sm-none d-md-block">
           <p class="text-center">{{supply}}</p>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2" md="1">
           <p class="text-center" :class="[change24h < 0 ? red : green]">{{change24h | percentage}}</p>
         </v-col>
-        <v-col cols="1">
-          <p class="text-center">Graph</p>
+        <v-col cols="2" md="1" class="d-sm-none d-md-block">
+          <p class="text-center">...</p>
         </v-col>
       </v-row>
     </v-card>
@@ -75,6 +75,20 @@ export default {
     }
   },
   computed: {
+    imgSize() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return '25'
+        case 'sm':
+          return '25'
+        case 'md':
+          return '50'
+        case 'lg':
+          return '50'
+        case 'xl':
+          return '50'
+      }
+    },
     name() {
       return this.coin.ticker.name
         ? this.coin.ticker.name
@@ -84,7 +98,7 @@ export default {
       return this.coin.ticker.rank
     },
     supply() {
-      return this.coin.supply.toFixed(3)
+      return this.coin.supply.toFixed(0)
     },
     price() {
       return this.coin.ticker.quotes.USD.price.toFixed(3)

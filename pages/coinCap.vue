@@ -6,35 +6,36 @@
     <v-container fluid>
       <v-card>
         <v-row>
-          <v-col cols="1">
+          <v-col cols="2" md="1">
             <p class="text-center">#</p>
           </v-col>
-          <v-col cols="2">
-            <p class="text-center">Name</p>
+          <v-col cols="4" md="2">
+            <p class="text-center">Symbol & Name</p>
           </v-col>
-          <v-col cols="2">
-            <p class="text-center">Cap</p>
+          <v-col cols="2" md="2">
+            <p class="text-center">Market Cap</p>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2" md="1">
             <p class="text-center">Price</p>
           </v-col>
-          <v-col cols="2">
+          <v-col cols="2" md="2" class="d-sm-none d-md-block">
             <p class="text-center">Volume 24h</p>
           </v-col>
-          <v-col cols="2">
+          <v-col cols="2" md="2" class="d-sm-none d-md-block">
             <p class="text-center">Supply</p>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2" md="1">
             <p class="text-center">Change</p>
           </v-col>
-          <v-col cols="1">
-            <p class="text-center">Graph</p>
+          <v-col cols="2" md="1" class="d-sm-none d-md-block">
+            <p class="text-center">...</p>
           </v-col>
         </v-row>
       </v-card>
     </v-container>
     <!-- <v-container>
     <div>-->
+    <v-progress-linear buffer-value="0" stream :active="loading" color="cyan accent-4"></v-progress-linear>
     <Coin v-for="(coin,index) in sortByMarketCap" v-bind:coin="coin" :key="coin.ticker.symbol" />
     <Coin v-for="(coin,index) in priceNull" v-bind:coin="coin" :key="coin.ticker.symbol" />
     <!-- </div>

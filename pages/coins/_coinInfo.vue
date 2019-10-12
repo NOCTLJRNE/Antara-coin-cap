@@ -12,7 +12,8 @@
     </v-container>-->
     <v-container>
       <v-row>
-        <v-col cols="3">
+        <!-- <v-col cols="3"> -->
+        <v-col cols="12" md="3" sm="12" >
           <v-card>
             <img :src="imgPath" height="50" width="50" />
             <v-card-title>{{symbolToName[id]}}</v-card-title>
@@ -23,8 +24,9 @@
             />
             <v-card-text v-else>Nothing here :[</v-card-text>
           </v-card>
-        </v-col>
-        <v-col cols="9">
+        </v-col cols="12">
+        <!-- <v-col cols="9">        -->
+        <v-col md="9" sm="12" >
           <v-card v-if="loaded">
             <v-card-title>
               {{ price | currency('$',3) }}
@@ -35,14 +37,26 @@
             <v-simple-table>
               <thead>
                 <tr>
-                  <th class="text-left font-weight-bold title">Market Cap</th>
-                  <th class="text-left font-weight-bold title">Volume (24h)</th>
-                  <th class="text-left font-weight-bold title">Circulating Supply</th>
-                  <th class="text-left font-weight-bold title">Max Supply</th>
+                  <!-- <th class="text-left font-weight-bold" :class="[breakPoint.sm ? 'subtitle-2' : 'title']">All-Time High</th>
+                  <th class="text-left font-weight-bold" :class="[breakPoint.sm ? 'subtitle-2' : 'title']">Market Cap</th>
+                  <th class="text-left font-weight-bold" :class="[breakPoint.sm ? 'subtitle-2' : 'title']">Volume (24h)</th>
+                  <th class="text-left font-weight-bold" :class="[breakPoint.sm ? 'subtitle-2' : 'title']">Circulating Supply</th>
+                  <th class="text-left font-weight-bold" :class="[breakPoint.sm ? 'subtitle-2' : 'title']">Max Supply</th> -->
+                  <th class="text-left font-weight-bold" :class="{'subtitle-2': breakPoint.sm, title: (breakPoint.md || breakPoint.lg)}">All-Time High</th>
+                  <th class="text-left font-weight-bold" :class="{'subtitle-2': breakPoint.sm, title: (breakPoint.md || breakPoint.lg)}">Market Cap</th>
+                  <th class="text-left font-weight-bold" :class="{'subtitle-2': breakPoint.sm, title: (breakPoint.md || breakPoint.lg)}">Volume (24h)</th>
+                  <th class="text-left font-weight-bold" :class="{'subtitle-2': breakPoint.sm, title: (breakPoint.md || breakPoint.lg)}">Circulating Supply</th>
+                  <th class="text-left font-weight-bold" :class="{'subtitle-2': breakPoint.sm, title: (breakPoint.md || breakPoint.lg)}">Max Supply</th>                  
                 </tr>
               </thead>
               <tbody>
                 <tr>
+                  <td>
+                    {{allTimeHigh | currency('$',3)}}
+                    <span
+                      :class="[percentFromATH < 0 ? red : green]"
+                    >&nbsp;({{percentFromATH | percentage}})</span>
+                  </td>
                   <td>{{marketCap | currency('$',0)}}</td>
                   <td>{{volume | currency('$',0)}}</td>
                   <td>{{supply}}</td>
@@ -60,41 +74,67 @@
 
       <usefulLinks v-if="loaded" :additionalData="{...coinInfoData.additional_data}" />
     </v-card>-->
-    <div class="container">
-      <h3>
-        {{id.toUpperCase()}} CHARTS
-        <span v-if="!loaded">Loading...</span>
-        <span v-if="noChartsData">Data not found :[</span>
-      </h3>
-      <!-- <chartkmd v-if="loaded" :chartdata="testdata" :options="options" /> -->
-      <!-- <chartkmd v-if="loaded" :chartdata="coinPriceChartData" :options="options" />
+    <v-progress-linear buffer-value="0" stream :active="!loaded" color="cyan accent-4"></v-progress-linear>
+    <v-tabs centered icons-and-text v-model="tab">
+      <v-tabs-slider></v-tabs-slider>
+      <v-tab href="#tab-1">
+        {{id.toUpperCase()}} Charts
+        <v-icon>mdi-chart-line</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-2">
+        BlockChain Info
+        <v-icon>mdi-information-outline</v-icon>
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item value="tab-1">
+        <h3>
+          <span v-if="!loaded">Loading...</span>
+          <span v-if="noChartsData">Data not found :[</span>
+        </h3>
+        <!-- <chartkmd v-if="loaded" :chartdata="testdata" :options="options" /> -->
+        <!-- <chartkmd v-if="loaded" :chartdata="coinPriceChartData" :options="options" />
       <chartkmd v-if="loaded" :chartdata="coinMarketCapChartData" :options="options" />
-      <chartkmd v-if="loaded" :chartdata="coinVolumeChartData" :options="options" />-->
-      <apexchart
-        v-if="loaded"
-        width="100%"
-        height="350"
-        type="line"
-        :options="apexoptionsprice"
-        :series="apexseriesprice"
-      ></apexchart>
-      <apexchart
-        v-if="loaded"
-        width="100%"
-        height="350"
-        type="line"
-        :options="apexoptionscap"
-        :series="apexseriescap"
-      ></apexchart>
-      <apexchart
-        v-if="loaded"
-        width="100%"
-        height="350"
-        type="line"
-        :options="apexoptionsvolume"
-        :series="apexseriesvolume"
-      ></apexchart>
-    </div>
+        <chartkmd v-if="loaded" :chartdata="coinVolumeChartData" :options="options" />-->
+        <apexchart
+          v-if="loaded"
+          width="100%"
+          height="350"
+          type="line"
+          :options="apexoptionsprice"
+          :series="apexseriesprice"
+        ></apexchart>
+        <apexchart
+          v-if="loaded"
+          width="100%"
+          height="350"
+          type="line"
+          :options="apexoptionscap"
+          :series="apexseriescap"
+        ></apexchart>
+        <apexchart
+          v-if="loaded"
+          width="100%"
+          height="350"
+          type="line"
+          :options="apexoptionsvolume"
+          :series="apexseriesvolume"
+        ></apexchart>
+      </v-tab-item>
+      <v-tab-item value="tab-2">
+        <v-simple-table v-if="loaded">
+          <tbody>
+            <tr v-for="item in blockChainInfo" :key="item.name">
+              <td>{{ item.name }}</td>
+              <td>{{ item.value }}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+      </v-tab-item>
+    </v-tabs-items>
+
+    <div class="container"></div>
   </div>
 </template>
 
@@ -121,6 +161,7 @@ export default {
   data() {
     return {
       id: this.$route.params.coinInfo,
+      tab: null,
       symbolToName: {
         kmd: 'Komodo',
         dex: 'DEX',
@@ -164,7 +205,7 @@ export default {
         ninja: 'Ninja',
         mesh: 'Mesh',
         kmdice: 'KMDice',
-        prlpay: 'PRLPay'
+        prlpay: 'PearlPay'
       },
       // imgPathArray: {
       //   Komodo: './img/kmd.png', // work
@@ -279,9 +320,15 @@ export default {
         })
         .finally(() => (this.loaded = true))
       // this.$myInjectedFunction('test plugins')
+    },
+    onResize(){
+      console.log("resizing:", this.$vuetify.breakpoint.name );
     }
   },
   computed: {
+    breakPoint(){
+      return this.$vuetify.breakpoint
+    },
     imgPath() {
       // let path = this.imgPathArray[this.id]
       // return require('' + path)
@@ -404,6 +451,12 @@ export default {
     },
     price() {
       return this.coinInfoData.ticker.quotes.USD.price
+    },
+    allTimeHigh() {
+      return this.coinInfoData.ticker.quotes.USD.ath_price
+    },
+    percentFromATH() {
+      return this.coinInfoData.ticker.quotes.USD.percent_from_price_ath
     },
     symbol() {
       return this.coinInfoData.ticker.symbol
@@ -636,6 +689,32 @@ export default {
           // data: [...this.coinVolumeComputed]
           data: this.volumedataraw
         }
+      ]
+    },
+    blockHeight() {
+      return { name: 'Height', value: this.coinInfoData.status.info.blocks }
+    },
+    lastBlockHash() {
+      return { name: 'Last Block', value: this.coinInfoData.block_last_hash }
+    },
+    notarized() {
+      return {
+        name: 'Notarized',
+        value: this.coinInfoData.status.info.notarized
+      }
+    },
+    difficulty() {
+      return {
+        name: 'Difficulty',
+        value: this.coinInfoData.status.info.difficulty.toFixed(0)
+      }
+    },
+    blockChainInfo() {
+      return [
+        this.blockHeight,
+        this.lastBlockHash,
+        this.notarized,
+        this.difficulty
       ]
     }
   },

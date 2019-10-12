@@ -3,18 +3,35 @@
     <v-row>
   <v-col cols="6">
   <v-card>-->
-  <ul style="list-style: none;">
-    <!-- <li class="listItems01" v-for="(item, i) in itemsCoins" :key="i">
+  <div>
+    <ul style="list-style: none;">
+      <!-- <li class="listItems01" v-for="(item, i) in itemsCoins" :key="i">
       <v-icon v-text="item.icon"></v-icon>
 
       <a :href="allLinksObjectComputed[i].link">{{allLinksObjectComputed[i].link}}</a>
-    </li>-->
-    <li class="listItems01" v-for="(item, i) in allAdditionalDataComputed" :key="i">
-      <v-icon v-text="item.icon"></v-icon>
+      </li>-->
+      <li
+        class="listItems01 d-none d-md-block"
+        v-for="(item, i) in allAdditionalDataComputed"
+        :key="i"
+      >
+        <v-icon v-text="item.icon"></v-icon>
+        <a :href="allAdditionalDataComputed[i].link">{{allAdditionalDataComputed[i].text}}</a>
+      </li>
+    </ul>
+    <v-row>
+      <v-col
+        cols="3"
+        class="d-table-row d-md-none d-flex justify-center"
+        v-for="(item, i) in allAdditionalDataComputed"
+        :key="i"
+      >
+        <v-icon v-text="item.icon"></v-icon>
+        <a :href="allAdditionalDataComputed[i].link">{{allAdditionalDataComputed[i].text}}</a>
+      </v-col>
+    </v-row>
+  </div>
 
-      <a :href="allAdditionalDataComputed[i].link">{{allAdditionalDataComputed[i].text}}</a>
-    </li>
-  </ul>
   <!-- </v-card>
   </v-col>
     </v-row>
