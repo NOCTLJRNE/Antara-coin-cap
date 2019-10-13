@@ -205,7 +205,8 @@ export default {
         ninja: 'Ninja',
         mesh: 'Mesh',
         kmdice: 'KMDice',
-        prlpay: 'PearlPay'
+        prlpay: 'PearlPay',
+        hush: 'Hush'
       },
       // imgPathArray: {
       //   Komodo: './img/kmd.png', // work
